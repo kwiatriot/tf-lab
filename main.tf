@@ -724,7 +724,7 @@ resource "aws_network_interface" "asav_mgmt_interface" {
 }
 #Create mgmt EIP
 resource "aws_eip" "asav_mgmt_eip" {
-  depends_on = [aws_internet_gateway.transit_internet_gateway]
+  depends_on        = [aws_internet_gateway.transit_internet_gateway]
   network_interface = aws_network_interface.asav_mgmt_interface.id
 }
 #Creating the public interface
@@ -740,7 +740,7 @@ resource "aws_network_interface" "asav_outside_interface" {
 }
 #Create mgmt EIP
 resource "aws_eip" "asav_outside_eip" {
-  depends_on = [aws_internet_gateway.transit_internet_gateway]
+  depends_on        = [aws_internet_gateway.transit_internet_gateway]
   network_interface = aws_network_interface.asav_outside_interface.id
 }
 #Creating the private interface
@@ -774,7 +774,7 @@ resource "aws_instance" "cisco_asav" {
 
   network_interface {
     network_interface_id = aws_network_interface.asav_inside_interface.id
-    device_index = 2
+    device_index         = 2
   }
   tags = {
     Name = "cisco_asav"

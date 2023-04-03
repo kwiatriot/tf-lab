@@ -20,9 +20,9 @@ output "transit_host_private_ip" {
 }
 output "asav-mgmt_eip" {
   description = "The Public IP of the asav-mgmt interface"
-  value = aws_eip.asav_mgmt_eip
+  value       = aws_eip.asav_mgmt_eip
 }
 output "asav-outside_eip" {
   description = "The Public IP of the asav-outside interface"
-  value = aws_eip.asav_outside_eip
+  value       = aws_eip.asav_outside_eip
 }

@@ -41,5 +41,5 @@ dns domain-lookup outside
 dns nameserver 8.8.8.8
 icmp permit any inside
 route inside 10.0.0.0 255.255.252.0 10.0.5.1 1
-!
+! 
 
