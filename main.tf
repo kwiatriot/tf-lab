@@ -624,7 +624,7 @@ resource "aws_route_table" "transit_inside_route_table" {
   vpc_id = aws_vpc.transit_vpc.id
   route {
     cidr_block           = "0.0.0.0/0"
-    network_interface_id = aws_network_interface.asav_outside_interface.id
+    network_interface_id = aws_network_interface.asav_inside_interface.id
   }
   route {
     cidr_block         = "10.0.1.0/24"

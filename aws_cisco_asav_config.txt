@@ -31,14 +31,15 @@ username admin attributes
 service-type admin
 aaa authentication ssh console LOCAL
 !
-dns domain-lookup outside
-dns nameserver 8.8.8.8
 same-security-traffic permit inter-interface
 same-security-traffic permit intra-interface
 access-list allow-all extended permit ip any any
 access-list allow-all extended permit ip any6 any6
 access-group allow-all global
+!
+dns domain-lookup outside
+dns nameserver 8.8.8.8
 icmp permit any inside
 route inside 10.0.0.0 255.255.252.0 10.0.5.1 1
-
+!
 
