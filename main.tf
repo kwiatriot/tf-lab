@@ -132,9 +132,7 @@ resource "aws_security_group" "mgmt_sg" {
   name   = "mgmt-secuirty-group"
   vpc_id = aws_vpc.mgmt_vpc.id
   ingress {
-    cidr_blocks = [
-      "0.0.0.0/0"
-    ]
+    cidr_blocks = ["0.0.0.0/0"]
     from_port = 22
     to_port   = 22
     protocol  = "tcp"
@@ -167,7 +165,7 @@ resource "aws_instance" "mgmt_jump" {
     host        = self.public_ip
   }
   provisioner "local-exec" {
-    command = "chmod 600 ${local_file.private_key_pem.filename}"
+    command = "chmod 400 ${local_file.private_key_pem.filename}"
   }
   tags = {
     Name      = "Bastion Host"
@@ -206,6 +204,10 @@ resource "aws_subnet" "prod_private_subnet" {
 #Create route table
 resource "aws_route_table" "prod_private_route_table" {
   vpc_id = aws_vpc.prod_vpc.id
+  route {
+    cidr_block         = "0.0.0.0/0"
+    transit_gateway_id = aws_ec2_transit_gateway.tf_lab_tgw.id
+  }
   route {
     cidr_block         = "10.0.0.0/24"
     transit_gateway_id = aws_ec2_transit_gateway.tf_lab_tgw.id
@@ -310,6 +312,10 @@ resource "aws_subnet" "shared_private_subnet" {
 resource "aws_route_table" "shared_private_route_table" {
   vpc_id = aws_vpc.shared_vpc.id
   route {
+    cidr_block         = "0.0.0.0/0"
+    transit_gateway_id = aws_ec2_transit_gateway.tf_lab_tgw.id
+  }
+  route {
     cidr_block         = "10.0.1.0/24"
     transit_gateway_id = aws_ec2_transit_gateway.tf_lab_tgw.id
   }
@@ -412,6 +418,10 @@ resource "aws_subnet" "dev_private_subnet" {
 #Create route table
 resource "aws_route_table" "dev_private_route_table" {
   vpc_id = aws_vpc.dev_vpc.id
+  route {
+    cidr_block         = "0.0.0.0/0"
+    transit_gateway_id = aws_ec2_transit_gateway.tf_lab_tgw.id
+  }
   route {
     cidr_block         = "10.0.1.0/24"
     transit_gateway_id = aws_ec2_transit_gateway.tf_lab_tgw.id
@@ -539,9 +549,7 @@ resource "aws_security_group" "transit_mgmt_sg" {
   name   = "transit_mgmt-security-group"
   vpc_id = aws_vpc.transit_vpc.id
   ingress {
-    cidr_blocks = [
-      "0.0.0.0/0"
-    ]
+    cidr_blocks = ["0.0.0.0/0"]
     from_port = 22
     to_port   = 22
     protocol  = "tcp"
@@ -594,9 +602,7 @@ resource "aws_security_group" "transit_outside_sg" {
   name   = "transit_outside-security-group"
   vpc_id = aws_vpc.transit_vpc.id
   ingress {
-    cidr_blocks = [
-      "0.0.0.0/0"
-    ]
+    cidr_blocks = ["0.0.0.0/0"]
     from_port = 0
     to_port   = 0
     protocol  = "-1"
@@ -658,18 +664,10 @@ resource "aws_security_group" "transit_inside_sg" {
   name   = "transit_inside-security-group"
   vpc_id = aws_vpc.transit_vpc.id
   ingress {
-    cidr_blocks = [
-      "10.0.0.0/24"
-    ]
-    from_port = 22
-    to_port   = 22
-    protocol  = "tcp"
-  }
-  ingress {
-    cidr_blocks = ["10.0.0.0/16"]
-    from_port   = 8
+    cidr_blocks = ["0.0.0.0/0"]
+    from_port   = 0
     to_port     = 0
-    protocol    = "icmp"
+    protocol    = "-1"
   }
   // Terraform removes the default rule
   egress {
@@ -679,7 +677,7 @@ resource "aws_security_group" "transit_inside_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
-# Host in Dev VPC
+# Host in transit VPC
 resource "aws_instance" "transit_host" {
   ami             = data.aws_ami.ubuntu.id
   instance_type   = "t2.micro"
@@ -776,6 +774,7 @@ resource "aws_instance" "cisco_asav" {
     network_interface_id = aws_network_interface.asav_inside_interface.id
     device_index         = 2
   }
+  user_data = file("aws_cisco_asav_config.txt")
   tags = {
     Name = "cisco_asav"
   }

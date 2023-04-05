@@ -1,45 +1,94 @@
-! ASA Version 9.19.1
+ASA Version 9.19(1) 
 !
-interface management0/0
-management-only
-nameif management
-security-level 100
-ip address dhcp setroute
+hostname ciscoasa
+enable password Cisco!23
+service-module 0 keepalive-timeout 4
+service-module 0 keepalive-counter 6
+names
+no mac-address auto
 
-no shutdown
 !
-interface G0/0
-nameif outside
-security-level 0
-ip address dhcp setroute
-
-no shutdown
+interface Management0/0
+ management-only
+ nameif management
+ security-level 100
+ ip address dhcp setroute 
 !
-interface G0/1
-nameif inside
-ip address dhcp
-
-no shutdown
+interface TenGigabitEthernet0/0
+ nameif outside
+ security-level 0
+ ip address dhcp setroute 
 !
-crypto key generate rsa modulus 2048
-ssh 0 0 management
-ssh ::/0 management
-ssh timeout 60
-ssh version 2
-username admin password Cisco!23 privilege 15
-username admin attributes
-service-type admin
-aaa authentication ssh console LOCAL
+interface TenGigabitEthernet0/1
+ nameif inside
+ security-level 100
+ ip address dhcp 
 !
+ftp mode passive
+dns domain-lookup outside
+dns server-group DefaultDNS
+ name-server 8.8.8.8 
 same-security-traffic permit inter-interface
 same-security-traffic permit intra-interface
-access-list allow-all extended permit ip any any
-access-list allow-all extended permit ip any6 any6
+no object-group-search access-control
+object network inside_to_outside
+ subnet 10.0.0.0 255.255.252.0
+object network INSIDE_NETS
+ subnet 10.0.0.0 255.255.252.0
+object network INSIDE_ASA
+ subnet 10.0.5.0 255.255.255.0
 access-group allow-all global
-!
-dns domain-lookup outside
-dns nameserver 8.8.8.8
+access-list allow-all extended permit ip any4 any4 
+access-list allow-all extended permit ip any6 any6 
+pager lines 23
+mtu management 1500
+mtu outside 1500
+mtu inside 1500
+no failover
+no failover wait-disable
+icmp unreachable rate-limit 1 burst-size 1
 icmp permit any inside
+no asdm history enable
+arp timeout 14400
+no arp permit-nonconnected
+arp rate-limit 16384
+!
+object network INSIDE_NETS
+ nat (inside,outside) dynamic interface
+object network INSIDE_ASA
+ nat (inside,outside) dynamic interface
 route inside 10.0.0.0 255.255.252.0 10.0.5.1 1
-! 
-
+timeout xlate 3:00:00
+timeout pat-xlate 0:00:30
+timeout conn 1:00:00 half-closed 0:10:00 udp 0:02:00 sctp 0:02:00 icmp 0:00:02
+timeout sunrpc 0:10:00 h323 0:05:00 h225 1:00:00 mgcp 0:05:00 mgcp-pat 0:05:00
+timeout sip 0:30:00 sip_media 0:02:00 sip-invite 0:03:00 sip-disconnect 0:02:00
+timeout sip-provisional-media 0:02:00 uauth 0:05:00 absolute
+timeout tcp-proxy-reassembly 0:01:00
+timeout floating-conn 0:00:00
+timeout conn-holddown 0:00:15
+timeout igp stale-route 0:01:10
+user-identity default-domain LOCAL
+aaa authentication ssh console LOCAL 
+aaa authentication login-history
+no snmp-server location
+no snmp-server contact
+!        
+telnet timeout 5
+ssh stack ciscossh
+ssh stricthostkeycheck
+ssh timeout 60
+ssh key-exchange group dh-group14-sha256
+ssh 0.0.0.0 0.0.0.0 management
+ssh ::/0 management
+aaa authentication ssh console LOCAL
+console timeout 0
+threat-detection basic-threat
+threat-detection statistics access-list
+no threat-detection statistics tcp-intercept
+dynamic-access-policy-record DfltAccessPolicy
+username admin nopassword privilege 15
+username admin attributes
+ service-type admin
+ ssh authentication publickey 15:78:2d:7e:18:65:f8:95:5f:26:b7:58:3a:6a:15:9a:44:d4:08:c3:31:3f:7c:9a:72:44:fc:95:a2:46:61:de hashed
+!
