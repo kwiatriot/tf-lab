@@ -12,17 +12,20 @@ interface Management0/0
  management-only
  nameif management
  security-level 100
- ip address dhcp setroute 
+ ip address dhcp setroute
+ no shut 
 !
 interface TenGigabitEthernet0/0
  nameif outside
  security-level 0
  ip address dhcp setroute 
+ no shut
 !
 interface TenGigabitEthernet0/1
  nameif inside
  security-level 100
- ip address dhcp 
+ ip address dhcp
+ no shut 
 !
 ftp mode passive
 dns domain-lookup outside
@@ -75,6 +78,7 @@ no snmp-server location
 no snmp-server contact
 !        
 telnet timeout 5
+crypto key generate rsa modulus 2048
 ssh stack ciscossh
 ssh stricthostkeycheck
 ssh timeout 60
@@ -90,5 +94,4 @@ dynamic-access-policy-record DfltAccessPolicy
 username admin nopassword privilege 15
 username admin attributes
  service-type admin
- ssh authentication publickey 15:78:2d:7e:18:65:f8:95:5f:26:b7:58:3a:6a:15:9a:44:d4:08:c3:31:3f:7c:9a:72:44:fc:95:a2:46:61:de hashed
 !
