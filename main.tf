@@ -133,9 +133,9 @@ resource "aws_security_group" "mgmt_sg" {
   vpc_id = aws_vpc.mgmt_vpc.id
   ingress {
     cidr_blocks = ["0.0.0.0/0"]
-    from_port = 22
-    to_port   = 22
-    protocol  = "tcp"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
   }
   ingress {
     cidr_blocks = ["0.0.0.0/0"]
@@ -550,9 +550,9 @@ resource "aws_security_group" "transit_mgmt_sg" {
   vpc_id = aws_vpc.transit_vpc.id
   ingress {
     cidr_blocks = ["0.0.0.0/0"]
-    from_port = 22
-    to_port   = 22
-    protocol  = "tcp"
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
   }
   ingress {
     cidr_blocks = ["0.0.0.0/0"]
@@ -603,9 +603,9 @@ resource "aws_security_group" "transit_outside_sg" {
   vpc_id = aws_vpc.transit_vpc.id
   ingress {
     cidr_blocks = ["0.0.0.0/0"]
-    from_port = 0
-    to_port   = 0
-    protocol  = "-1"
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
   }
   // Terraform removes the default rule
   egress {
