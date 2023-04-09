@@ -1,6 +1,6 @@
 # Configure the AWS Provider
 provider "aws" {
-  region = "us-east-1"
+  region = var.aws_region
 }
 #Retrieve the list of AZs in the current AWS region
 data "aws_availability_zones" "available" {}
@@ -55,7 +55,7 @@ resource "aws_key_pair" "generated" {
 
 #Define the Managment VPC
 resource "aws_vpc" "mgmt_vpc" {
-  cidr_block = "10.0.0.0/24"
+  cidr_block = var.vpc_list.mgmt.cidr_block
   tags = {
     Name        = "mgmt_vpc"
     Environment = "tf_lab"
@@ -81,15 +81,15 @@ resource "aws_route_table" "mgmt_public_route_table" {
     gateway_id = aws_internet_gateway.mgmt_internet_gateway.id
   }
   route {
-    cidr_block         = "10.0.1.0/24"
+    cidr_block         = var.vpc_list.prod.cidr_block
     transit_gateway_id = aws_ec2_transit_gateway.tf_lab_tgw.id
   }
   route {
-    cidr_block         = "10.0.2.0/24"
+    cidr_block         = var.vpc_list.shared.cidr_block
     transit_gateway_id = aws_ec2_transit_gateway.tf_lab_tgw.id
   }
   route {
-    cidr_block         = "10.0.3.0/24"
+    cidr_block         = var.vpc_list.dev.cidr_block
     transit_gateway_id = aws_ec2_transit_gateway.tf_lab_tgw.id
   }
   route {
@@ -184,7 +184,7 @@ resource "aws_instance" "mgmt_jump" {
 
 #Define the Prod VPC
 resource "aws_vpc" "prod_vpc" {
-  cidr_block = "10.0.1.0/24"
+  cidr_block = var.vpc_list.prod.cidr_block
   tags = {
     Name        = "prod_vpc"
     Environment = "tf_lab"
@@ -209,15 +209,15 @@ resource "aws_route_table" "prod_private_route_table" {
     transit_gateway_id = aws_ec2_transit_gateway.tf_lab_tgw.id
   }
   route {
-    cidr_block         = "10.0.0.0/24"
+    cidr_block         = var.vpc_list.mgmt.cidr_block
     transit_gateway_id = aws_ec2_transit_gateway.tf_lab_tgw.id
   }
   route {
-    cidr_block         = "10.0.2.0/24"
+    cidr_block         = var.vpc_list.shared.cidr_block
     transit_gateway_id = aws_ec2_transit_gateway.tf_lab_tgw.id
   }
   route {
-    cidr_block         = "10.0.3.0/24"
+    cidr_block         = var.vpc_list.dev.cidr_block
     transit_gateway_id = aws_ec2_transit_gateway.tf_lab_tgw.id
   }
   route {
@@ -252,12 +252,10 @@ resource "aws_security_group" "prod_sg" {
   name   = "prod-secuirty-group"
   vpc_id = aws_vpc.prod_vpc.id
   ingress {
-    cidr_blocks = [
-      "10.0.0.0/24"
-    ]
-    from_port = 22
-    to_port   = 22
-    protocol  = "tcp"
+    cidr_blocks = [var.vpc_list.mgmt.cidr_block]
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
   }
   ingress {
     cidr_blocks = ["10.0.0.0/16"]
@@ -291,7 +289,7 @@ resource "aws_instance" "prod_host" {
 
 #Define the Shared VPC
 resource "aws_vpc" "shared_vpc" {
-  cidr_block = "10.0.2.0/24"
+  cidr_block = var.vpc_list.shared.cidr_block
   tags = {
     Name        = "shared_vpc"
     Environment = "tf_lab"
@@ -316,15 +314,15 @@ resource "aws_route_table" "shared_private_route_table" {
     transit_gateway_id = aws_ec2_transit_gateway.tf_lab_tgw.id
   }
   route {
-    cidr_block         = "10.0.1.0/24"
+    cidr_block         = var.vpc_list.prod.cidr_block
     transit_gateway_id = aws_ec2_transit_gateway.tf_lab_tgw.id
   }
   route {
-    cidr_block         = "10.0.0.0/24"
+    cidr_block         = var.vpc_list.mgmt.cidr_block
     transit_gateway_id = aws_ec2_transit_gateway.tf_lab_tgw.id
   }
   route {
-    cidr_block         = "10.0.3.0/24"
+    cidr_block         = var.vpc_list.dev.cidr_block
     transit_gateway_id = aws_ec2_transit_gateway.tf_lab_tgw.id
   }
   route {
@@ -359,12 +357,10 @@ resource "aws_security_group" "shared_sg" {
   name   = "shared-secuirty-group"
   vpc_id = aws_vpc.shared_vpc.id
   ingress {
-    cidr_blocks = [
-      "10.0.0.0/24"
-    ]
-    from_port = 22
-    to_port   = 22
-    protocol  = "tcp"
+    cidr_blocks = [var.vpc_list.mgmt.cidr_block]
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
   }
   ingress {
     cidr_blocks = ["10.0.0.0/16"]
@@ -398,7 +394,7 @@ resource "aws_instance" "shared_host" {
 
 #Define the Dev VPC
 resource "aws_vpc" "dev_vpc" {
-  cidr_block = "10.0.3.0/24"
+  cidr_block = var.vpc_list.dev.cidr_block
   tags = {
     Name        = "dev_vpc"
     Environment = "tf_lab"
@@ -423,15 +419,15 @@ resource "aws_route_table" "dev_private_route_table" {
     transit_gateway_id = aws_ec2_transit_gateway.tf_lab_tgw.id
   }
   route {
-    cidr_block         = "10.0.1.0/24"
+    cidr_block         = var.vpc_list.prod.cidr_block
     transit_gateway_id = aws_ec2_transit_gateway.tf_lab_tgw.id
   }
   route {
-    cidr_block         = "10.0.2.0/24"
+    cidr_block         = var.vpc_list.shared.cidr_block
     transit_gateway_id = aws_ec2_transit_gateway.tf_lab_tgw.id
   }
   route {
-    cidr_block         = "10.0.0.0/24"
+    cidr_block         = var.vpc_list.mgmt.cidr_block
     transit_gateway_id = aws_ec2_transit_gateway.tf_lab_tgw.id
   }
   route {
@@ -466,12 +462,10 @@ resource "aws_security_group" "dev_sg" {
   name   = "dev-security-group"
   vpc_id = aws_vpc.dev_vpc.id
   ingress {
-    cidr_blocks = [
-      "10.0.0.0/24"
-    ]
-    from_port = 22
-    to_port   = 22
-    protocol  = "tcp"
+    cidr_blocks = [var.vpc_list.mgmt.cidr_block]
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
   }
   ingress {
     cidr_blocks = ["10.0.0.0/16"]
@@ -633,19 +627,19 @@ resource "aws_route_table" "transit_inside_route_table" {
     network_interface_id = aws_network_interface.asav_inside_interface.id
   }
   route {
-    cidr_block         = "10.0.1.0/24"
+    cidr_block         = var.vpc_list.prod.cidr_block
     transit_gateway_id = aws_ec2_transit_gateway.tf_lab_tgw.id
   }
   route {
-    cidr_block         = "10.0.2.0/24"
+    cidr_block         = var.vpc_list.shared.cidr_block
     transit_gateway_id = aws_ec2_transit_gateway.tf_lab_tgw.id
   }
   route {
-    cidr_block         = "10.0.3.0/24"
+    cidr_block         = var.vpc_list.dev.cidr_block
     transit_gateway_id = aws_ec2_transit_gateway.tf_lab_tgw.id
   }
   route {
-    cidr_block         = "10.0.0.0/24"
+    cidr_block         = var.vpc_list.mgmt.cidr_block
     transit_gateway_id = aws_ec2_transit_gateway.tf_lab_tgw.id
   }
   tags = {
