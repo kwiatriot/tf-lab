@@ -52,7 +52,6 @@ resource "aws_key_pair" "generated" {
 }
 
 
-
 #Define the Managment VPC
 resource "aws_vpc" "mgmt_vpc" {
   cidr_block = var.vpc_list.mgmt.cidr_block
@@ -121,12 +120,12 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "mgmt_tgw_attach" {
   transit_gateway_id = aws_ec2_transit_gateway.tf_lab_tgw.id
   vpc_id             = aws_vpc.mgmt_vpc.id
 }
-#Creating the route to MGMT VPC in TGW
-resource "aws_ec2_transit_gateway_route" "to_mgmt" {
-  destination_cidr_block         = "10.0.0.0/24"
-  transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.mgmt_tgw_attach.id
-  transit_gateway_route_table_id = aws_ec2_transit_gateway.tf_lab_tgw.association_default_route_table_id
-}
+##Creating the route to MGMT VPC in TGW
+#resource "aws_ec2_transit_gateway_route" "to_mgmt" {
+#  destination_cidr_block         = "10.0.0.0/24"
+#  transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.mgmt_tgw_attach.id
+#  transit_gateway_route_table_id = aws_ec2_transit_gateway.tf_lab_tgw.association_default_route_table_id
+#}
 # Security Groups
 resource "aws_security_group" "mgmt_sg" {
   name   = "mgmt-secuirty-group"
@@ -241,12 +240,12 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "prod_tgw_attach" {
   transit_gateway_id = aws_ec2_transit_gateway.tf_lab_tgw.id
   vpc_id             = aws_vpc.prod_vpc.id
 }
-#Creating the route to Prod VPC in TGW
-resource "aws_ec2_transit_gateway_route" "to_prod" {
-  destination_cidr_block         = "10.0.1.0/24"
-  transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.prod_tgw_attach.id
-  transit_gateway_route_table_id = aws_ec2_transit_gateway.tf_lab_tgw.association_default_route_table_id
-}
+##Creating the route to Prod VPC in TGW
+#resource "aws_ec2_transit_gateway_route" "to_prod" {
+#  destination_cidr_block         = "10.0.1.0/24"
+#  transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.prod_tgw_attach.id
+#  transit_gateway_route_table_id = aws_ec2_transit_gateway.tf_lab_tgw.association_default_route_table_id
+#}
 # Create Security Group
 resource "aws_security_group" "prod_sg" {
   name   = "prod-secuirty-group"
@@ -346,12 +345,12 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "shared_tgw_attach" {
   transit_gateway_id = aws_ec2_transit_gateway.tf_lab_tgw.id
   vpc_id             = aws_vpc.shared_vpc.id
 }
-#Creating the route to Shared VPC in TGW
-resource "aws_ec2_transit_gateway_route" "to_shared" {
-  destination_cidr_block         = "10.0.2.0/24"
-  transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.shared_tgw_attach.id
-  transit_gateway_route_table_id = aws_ec2_transit_gateway.tf_lab_tgw.association_default_route_table_id
-}
+##Creating the route to Shared VPC in TGW
+#resource "aws_ec2_transit_gateway_route" "to_shared" {
+#  destination_cidr_block         = "10.0.2.0/24"
+#  transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.shared_tgw_attach.id
+#  transit_gateway_route_table_id = aws_ec2_transit_gateway.tf_lab_tgw.association_default_route_table_id
+#}
 # Create Security Group
 resource "aws_security_group" "shared_sg" {
   name   = "shared-secuirty-group"
@@ -451,12 +450,12 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "dev_tgw_attach" {
   transit_gateway_id = aws_ec2_transit_gateway.tf_lab_tgw.id
   vpc_id             = aws_vpc.dev_vpc.id
 }
-#Creating the route to Dev VPC in TGW
-resource "aws_ec2_transit_gateway_route" "to_dev" {
-  destination_cidr_block         = "10.0.3.0/24"
-  transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.dev_tgw_attach.id
-  transit_gateway_route_table_id = aws_ec2_transit_gateway.tf_lab_tgw.association_default_route_table_id
-}
+##Creating the route to Dev VPC in TGW
+#resource "aws_ec2_transit_gateway_route" "to_dev" {
+#  destination_cidr_block         = "10.0.3.0/24"
+#  transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.dev_tgw_attach.id
+#  transit_gateway_route_table_id = aws_ec2_transit_gateway.tf_lab_tgw.association_default_route_table_id
+#}
 # Create Security Group
 resource "aws_security_group" "dev_sg" {
   name   = "dev-security-group"
@@ -697,12 +696,12 @@ resource "aws_ec2_transit_gateway_vpc_attachment" "transit_tgw_attach" {
   transit_gateway_id = aws_ec2_transit_gateway.tf_lab_tgw.id
   vpc_id             = aws_vpc.transit_vpc.id
 }
-#Creating the route for private subnet of Transit VPC in TGW
-resource "aws_ec2_transit_gateway_route" "to_transit_inside" {
-  destination_cidr_block         = "10.0.5.0/24"
-  transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.transit_tgw_attach.id
-  transit_gateway_route_table_id = aws_ec2_transit_gateway.tf_lab_tgw.association_default_route_table_id
-}
+##Creating the route for private subnet of Transit VPC in TGW
+#resource "aws_ec2_transit_gateway_route" "to_transit_inside" {
+#  destination_cidr_block         = "10.0.5.0/24"
+#  transit_gateway_attachment_id  = aws_ec2_transit_gateway_vpc_attachment.transit_tgw_attach.id
+#  transit_gateway_route_table_id = aws_ec2_transit_gateway.tf_lab_tgw.association_default_route_table_id
+#}
 #Creating the mgmt interface
 resource "aws_network_interface" "asav_mgmt_interface" {
   subnet_id         = aws_subnet.transit_mgmt_subnet.id
