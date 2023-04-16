@@ -7,35 +7,35 @@ variable "vpc_list" {
   type        = map(any)
   default = {
     dev = {
-      vpc        = "dev"
+      vpc_name        = "dev"
       cidr_block = "10.0.3.0/24"
       tags = {
         name = "Dev-VPC"
       }
     }
     shared = {
-      vpc        = "shared"
+      vpc_name        = "shared"
       cidr_block = "10.0.2.0/24"
       tags = {
         name = "Shared-VPC"
       }
     }
     prod = {
-      vpc        = "prod"
+      vpc_name        = "prod"
       cidr_block = "10.0.1.0/24"
       tags = {
         name = "Prod-VPC"
       }
     }
     mgmt = {
-      vpc        = "mgmt"
+      vpc_name        = "mgmt"
       cidr_block = "10.0.0.0/24"
       tags = {
         name = "Mgmt-VPC"
       }
     }
     transit = {
-      vpc        = "transit"
+      vpc_name        = "transit"
       cidr_block = "10.0.4.0/23"
       tags = {
         name = "Transit-VPC"
